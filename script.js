@@ -281,7 +281,7 @@ function openBoss(id){
   document.getElementById('bm-hp').textContent=cB.hp;
   document.getElementById('bm-xp').textContent='+'+cB.reward;
   document.getElementById('boss-inner').style.borderColor=cB.color+'60';
-  document.getElementById('boss-accept-btn').style.cssText=`background:linear-gradient(135deg,${cB.color}cc,${cB.color}99);backdrop-filter:blur(8px);border:1px solid ${cB.color}60!important;box-shadow:0 4px 20px ${cB.color}40,inset 0 1px 0 rgba(255,255,255,0.15)`;
+  document.getElementById('boss-accept-btn').style.background=`linear-gradient(135deg,${cB.color},${cB.color}cc)`;
   document.getElementById('boss-accept-btn').onclick=()=>{document.getElementById('boss-modal').style.display='none';notif(`⚔️ ${cB.name} accepted!`,cB.color);};
   document.getElementById('boss-modal').style.display='flex';
 }
@@ -335,14 +335,14 @@ function render(){
 </div>
 
 <!-- Hero Card — Wanted Poster style -->
-<div style="class=\"glass-gold\" style=\"padding:22px;margin-bottom:14px\"">
+<div class="glass-gold" style="padding:22px;margin-bottom:14px">
   <!-- Corner ornaments -->
   <div style="position:absolute;top:8px;left:8px;color:rgba(255,183,3,0.3);font-size:14px">✦</div>
   <div style="position:absolute;top:8px;right:8px;color:rgba(255,183,3,0.3);font-size:14px">✦</div>
   <div style="position:absolute;bottom:8px;left:8px;color:rgba(255,183,3,0.3);font-size:14px">✦</div>
   <div style="position:absolute;bottom:8px;right:8px;color:rgba(255,183,3,0.3);font-size:14px">✦</div>
   <!-- Glow -->
-  <div style="style=\"position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,${rk.c}20,transparent 70%);border-radius:50%;pointer-events:none\""></div>
+  <div style=style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,${rk.c}20,transparent 70%);border-radius:50%;pointer-events:none"></div>
 
   <!-- Profile row -->
   <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
@@ -387,13 +387,13 @@ function render(){
     <span class="cinzel" style="font-size:11px;color:#22c55e">${Math.round((done/S.quests.length)*100)}%</span>
   </div>
   <div class="prog-track" style="margin-bottom:14px"><div class="prog-fill" style="width:${(done/S.quests.length)*100}%"></div></div>
-  ${inc.map(q=>`<div style="style=\"display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)\"">
-    <span style="font-size:17px">${q.icon}</span>
+  ${inc.map(q=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+    <span style="font-size:22px;flex-shrink:0;width:32px;text-align:center">${q.icon}</span>
     <div style="flex:1;min-width:0">
-      <div style="font-size:13px;color:var(--cream);font-weight:600;font-family:'Cinzel',serif">${q.title}</div>
+      <div style="font-size:13px;color:var(--cream);font-weight:600;font-family:'Cinzel',serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${q.title}</div>
       <div style="font-size:11px;color:var(--muted);font-family:'Crimson Pro',serif">${q.desc}</div>
     </div>
-    <span class="cinzel" style="font-size:11px;color:var(--gold);flex-shrink:0">+${q.xp}</span>
+    <span class="cinzel" style="font-size:11px;color:var(--gold);flex-shrink:0;padding-left:8px">+${q.xp}</span>
   </div>`).join('')}
   <button class="btn btn-ghost" onclick="setTab('quests')" style="width:100%;margin-top:12px;padding:9px;border-radius:8px;font-size:11px;letter-spacing:1px">VIEW ALL QUESTS →</button>
 </div>
@@ -435,7 +435,7 @@ function render(){
 
 <!-- Quest list -->
 ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}">
-  <div style="width:46px;height:46px;border-radius:12px;flex-shrink:0;background:${q.done?"var(--ocean-light)":c.color+"18"};border:1px solid ${q.done?"var(--dim)":c.color+"45"};display:flex;align-items:center;justify-content:center;font-size:22px">${q.done?"✅":q.icon}</div>
+  <div style="width:46px;height:46px;border-radius:14px;flex-shrink:0;background:${q.done?"rgba(255,255,255,0.04)":c.color+"15"};backdrop-filter:blur(8px);border:1px solid ${q.done?"rgba(255,255,255,0.07)":c.color+"40"};display:flex;align-items:center;justify-content:center;font-size:22px">${q.done?"✅":q.icon}</div>
   <div style="flex:1;min-width:0">
     <div class="cinzel" style="font-size:13px;font-weight:700;color:${q.done?"var(--muted)":"var(--cream)"}">${q.title}</div>
     <div style="font-size:11px;color:var(--muted);margin-top:1px;font-family:'Crimson Pro',serif">${q.desc}</div>
@@ -444,7 +444,7 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
       <span class="tag" style="color:${c.color};background:${c.color}18">${c.icon} +3</span>
     </div>
   </div>
-  ${!q.done?`<button class="btn" onclick="completeQuest(${q.id})" style="style=\"width:42px;height:42px;border-radius:14px;background:${c.color}15;backdrop-filter:blur(12px);border:1px solid ${c.color}60;color:${c.color};font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;box-shadow:0 4px 12px ${c.color}25,inset 0 1px 0 rgba(255,255,255,0.1)\"">✓</button>`:''}
+  ${!q.done?`<button class="btn" onclick="completeQuest(${q.id})" style="width:42px;height:42px;border-radius:14px;background:${c.color}15;backdrop-filter:blur(12px);border:1px solid ${c.color}60;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;box-shadow:0 4px 12px ${c.color}25,inset 0 1px 0 rgba(255,255,255,0.1)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${c.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>`:''}
 </div>`}).join('')}
 </div>`;
   }
@@ -459,7 +459,7 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
 </div>
 
 <!-- Profile stats -->
-<div style="class=\"glass-gold\" style=\"padding:18px;margin-bottom:12px\"">
+<div class="glass-gold" style="padding:18px;margin-bottom:12px">
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
     ${[
       {l:"Name",v:S.playerName},
@@ -468,7 +468,7 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
       {l:"Class",v:rk.lb},
       {l:"Total XP",v:tx.toLocaleString()},
       {l:"Streak",v:`${S.streak} Days`,c:"var(--orange)"}
-    ].map(it=>`<div style="style=\"background:rgba(255,255,255,0.05);backdrop-filter:blur(8px);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.08)\"">
+    ].map(it=>`<div style="background:rgba(255,255,255,0.05);backdrop-filter:blur(8px);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.08)">
       <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:1px">${it.l}</div>
       <div class="cinzel" style="font-size:14px;font-weight:700;color:${it.c||"var(--cream)"};margin-top:4px">${it.v}</div>
     </div>`).join('')}
@@ -501,12 +501,12 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
 </div>
 
 <!-- Warning banner -->
-<div style="style=\"background:rgba(214,40,40,0.08);backdrop-filter:blur(16px);border:1px solid rgba(214,40,40,0.25);border-radius:18px;padding:16px;margin-bottom:16px\"">
+<div style=style="background:rgba(214,40,40,0.08);backdrop-filter:blur(16px);border:1px solid rgba(214,40,40,0.25);border-radius:18px;padding:16px;margin-bottom:16px">
   <div class="cinzel" style="font-size:10px;color:var(--red);letter-spacing:2px;margin-bottom:5px">☠️ WARNING</div>
   <div style="font-size:14px;color:var(--muted);line-height:1.6;font-family:'Crimson Pro',serif">These are extreme real-life challenges. Defeat them to earn massive Bounty XP!</div>
 </div>
 
-${BOSSES.map(b=>`<div style="class=\"boss-card\" style=\"background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:18px;margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden\"" onclick="openBoss(${b.id})">
+${BOSSES.map(b=>`<div class="boss-card" style="background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:18px;margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.1)" onclick="openBoss(${b.id})">
   <div style="position:absolute;top:0;left:0;bottom:0;width:3px;background:linear-gradient(180deg,${b.color},${b.color}60)"></div>
   <div style="display:flex;align-items:center;gap:14px">
     <div style="width:56px;height:56px;border-radius:14px;background:${b.color}15;border:1px solid ${b.color}35;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">${b.icon}</div>
@@ -541,7 +541,7 @@ ${BOSSES.map(b=>`<div style="class=\"boss-card\" style=\"background:rgba(255,255
 </div>
 
 <!-- BMI card -->
-<div style="class=\"glass\" style=\"padding:22px;margin-bottom:12px;border-color:${bi.c}40\"">
+<div class="glass" style="padding:22px;margin-bottom:12px;border-color:${bi.c}40">
   <div style="text-align:center;margin-bottom:18px">
     <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:3px">BODY MASS INDEX</div>
     <div class="cinzel" style="font-size:52px;font-weight:900;color:${bi.c};margin-top:6px">${bv}</div>
@@ -549,7 +549,7 @@ ${BOSSES.map(b=>`<div style="class=\"boss-card\" style=\"background:rgba(255,255
   </div>
   <!-- BMI spectrum -->
   <div style="margin-bottom:18px">
-    <div style="style=\"height:10px;border-radius:5px;overflow:hidden;background:linear-gradient(90deg,#023E8A,#22c55e 40%,#FFB703 70%,#D62828);position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.4)\"">
+    <div style=style="height:10px;border-radius:5px;overflow:hidden;background:linear-gradient(90deg,#023E8A,#22c55e 40%,#FFB703 70%,#D62828);position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.4)">
       <div style="position:absolute;top:50%;transform:translateY(-50%);left:${bp}%;margin-left:-5px"><div style="width:10px;height:10px;background:white;border-radius:50%;box-shadow:0 0 6px rgba(0,0,0,0.5)"></div></div>
     </div>
     <div style="display:flex;justify-content:space-between;margin-top:4px">${["15","18.5","25","30","40"].map(v=>`<span style="font-size:9px;color:var(--dim)">${v}</span>`).join('')}</div>
@@ -559,17 +559,17 @@ ${BOSSES.map(b=>`<div style="class=\"boss-card\" style=\"background:rgba(255,255
     <div>
       <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">WEIGHT (kg)</div>
       <div style="display:flex;align-items:center;gap:7px">
-        <button onclick="adjW(-0.5)" style="class=\"adj-btn\" style=\"width:36px;height:36px\"">-</button>
+        <button onclick="adjW(-0.5)" style=class="adj-btn" style="width:36px;height:36px">-</button>
         <div class="cinzel" style="flex:1;text-align:center;font-size:19px;font-weight:700">${S.weight}</div>
-        <button onclick="adjW(0.5)" style="class=\"adj-btn\" style=\"width:36px;height:36px\"">+</button>
+        <button onclick="adjW(0.5)" style=class="adj-btn" style="width:36px;height:36px">+</button>
       </div>
     </div>
     <div>
       <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">HEIGHT (cm)</div>
       <div style="display:flex;align-items:center;gap:7px">
-        <button onclick="adjH(-1)" style="class=\"adj-btn\" style=\"width:36px;height:36px\"">-</button>
+        <button onclick="adjH(-1)" style=class="adj-btn" style="width:36px;height:36px">-</button>
         <div class="cinzel" style="flex:1;text-align:center;font-size:19px;font-weight:700">${S.height}</div>
-        <button onclick="adjH(1)" style="class=\"adj-btn\" style=\"width:36px;height:36px\"">+</button>
+        <button onclick="adjH(1)" style=class="adj-btn" style="width:36px;height:36px">+</button>
       </div>
     </div>
   </div>
@@ -621,9 +621,9 @@ ${BOSSES.map(b=>`<div style="class=\"boss-card\" style=\"background:rgba(255,255
 
 <!-- Achievement grid -->
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px">
-  ${S.achievements.map(a=>`<div style="background:var(--ocean-mid);border:1px solid ${a.unlocked?"rgba(255,183,3,0.35)":"rgba(255,255,255,0.05)"};border-radius:14px;padding:16px;opacity:${a.unlocked?1:0.5};position:relative;overflow:hidden">
+  ${S.achievements.map(a=>`<div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid ${a.unlocked?"rgba(255,183,3,0.35)":"rgba(255,255,255,0.07)"};border-radius:20px;padding:16px;opacity:${a.unlocked?1:0.45};position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.1)">
     ${a.unlocked?`<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)"></div>`:''}
-    <div style="font-size:28px;margin-bottom:7px">${a.unlocked?a.icon:"🔒"}</div>
+    <div style="font-size:${a.unlocked?'28':'0'}px;margin-bottom:7px;height:34px;display:flex;align-items:center">${a.unlocked?a.icon:`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(139,155,180,0.5)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`}</div>
     <div class="cinzel" style="font-size:12px;font-weight:700;color:${a.unlocked?"var(--gold)":"var(--muted)"}">${a.title}</div>
     <div style="font-size:11px;color:var(--dim);margin-top:3px;font-family:'Crimson Pro',serif">${a.desc}</div>
     ${a.unlocked?`<div class="cinzel" style="font-size:9px;color:#22c55e;margin-top:6px;letter-spacing:1px">✓ UNLOCKED</div>`:""}
@@ -632,7 +632,7 @@ ${BOSSES.map(b=>`<div style="class=\"boss-card\" style=\"background:rgba(255,255
 
 <!-- Leaderboard -->
 <div class="cinzel" style="font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:12px">🏴‍☠️ PIRATE LEADERBOARD</div>
-${lb.map((p,i)=>`<div style="background:${p.me?"var(--ocean-light)":"var(--ocean-mid)"};border:1px solid ${p.me?"rgba(255,183,3,0.4)":"rgba(255,183,3,0.1)"};border-radius:12px;padding:12px 15px;display:flex;align-items:center;gap:12px;margin-bottom:8px;${p.me?"box-shadow:0 0 15px rgba(255,183,3,0.1)":""}">
+${lb.map((p,i)=>`<div style="background:${p.me?"rgba(255,183,3,0.08)":"rgba(255,255,255,0.05)"};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid ${p.me?"rgba(255,183,3,0.4)":"rgba(255,255,255,0.08)"};border-radius:16px;padding:12px 15px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:${p.me?"0 0 20px rgba(255,183,3,0.12),inset 0 1px 0 rgba(255,255,255,0.15)":"0 2px 12px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.06)"}">
   <div style="width:26px;text-align:center;font-size:${i<3?18:12}px;color:${i===0?"#FFB703":i===1?"#94a3b8":i===2?"#b45309":"var(--dim)"}">${i<3?md[i]:`#${i+1}`}</div>
   <div style="flex:1;min-width:0">
     <div class="cinzel" style="font-size:13px;font-weight:700;color:${p.me?"var(--gold)":"var(--cream)"};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.n}</div>
