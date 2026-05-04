@@ -377,7 +377,7 @@ function render(){
     {l:"Today",v:`${done}/${S.quests.length}`,i:"📜",c:"var(--navy-mid)"},
     {l:"Total",v:S.totalQuestsDone,i:"✅",c:"#22c55e"},
     {l:"Awards",v:`${S.achievements.filter(a=>a.unlocked).length}/${S.achievements.length}`,i:"🏆",c:"var(--gold)"}
-  ].map(s=>`<div class="stat-mini" style="padding:14px 10px"><div style="font-size:20px">${s.i}</div><div class="cinzel" style="font-size:18px;font-weight:700;color:${s.c};margin-top:4px">${s.v}</div><div class="cinzel" style="font-size:9px;color:var(--muted);margin-top:2px;letter-spacing:1px">${s.l}</div></div>`).join('')}
+  ].map(s=>`<div class="stat-mini" style="padding:14px 10px"><div style="font-size:20px">${s.i}</div><div class="cinzel" style="font-size:18px;font-weight:700;color:${s.c};margin-top:4px">${s.v}</div><div class="cinzel" style="font-size:9px;color:rgba(139,155,180,0.85);margin-top:2px;letter-spacing:1px">${s.l}</div></div>`).join('')}
 </div>
 
 <!-- Today's Progress -->
@@ -390,8 +390,8 @@ function render(){
   ${inc.map(q=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
     <span style="font-size:22px;flex-shrink:0;width:32px;text-align:center">${q.icon}</span>
     <div style="flex:1;min-width:0">
-      <div style="font-size:13px;color:var(--cream);font-weight:600;font-family:'Cinzel',serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${q.title}</div>
-      <div style="font-size:11px;color:var(--muted);font-family:'Crimson Pro',serif">${q.desc}</div>
+      <div style="font-size:13px;color:rgba(253,248,236,0.95);font-weight:600;font-family:'Cinzel',serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${q.title}</div>
+      <div style="font-size:11px;color:rgba(139,155,180,0.85);font-family:'Crimson Pro',serif">${q.desc}</div>
     </div>
     <span class="cinzel" style="font-size:11px;color:var(--gold);flex-shrink:0;padding-left:8px">+${q.xp}</span>
   </div>`).join('')}
@@ -437,8 +437,8 @@ function render(){
 ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}">
   <div style="width:46px;height:46px;border-radius:14px;flex-shrink:0;background:${q.done?"rgba(255,255,255,0.04)":c.color+"15"};backdrop-filter:blur(8px);border:1px solid ${q.done?"rgba(255,255,255,0.07)":c.color+"40"};display:flex;align-items:center;justify-content:center;font-size:22px">${q.done?"✅":q.icon}</div>
   <div style="flex:1;min-width:0">
-    <div class="cinzel" style="font-size:13px;font-weight:700;color:${q.done?"var(--muted)":"var(--cream)"}">${q.title}</div>
-    <div style="font-size:11px;color:var(--muted);margin-top:1px;font-family:'Crimson Pro',serif">${q.desc}</div>
+    <div class="cinzel" style="font-size:13px;font-weight:700;color:${q.done?"rgba(139,155,180,0.5)":"rgba(253,248,236,0.95)"}">${q.title}</div>
+    <div style="font-size:11px;color:rgba(139,155,180,0.85);margin-top:2px;font-family:'Crimson Pro',serif">${q.desc}</div>
     <div style="display:flex;gap:6px;margin-top:6px">
       <span class="tag" style="color:var(--gold);background:rgba(255,183,3,0.12)">+${q.xp} XP</span>
       <span class="tag" style="color:${c.color};background:${c.color}18">${c.icon} +3</span>
@@ -470,7 +470,7 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
       {l:"Streak",v:`${S.streak} Days`,c:"var(--orange)"}
     ].map(it=>`<div style="background:rgba(255,255,255,0.05);backdrop-filter:blur(8px);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.08)">
       <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:1px">${it.l}</div>
-      <div class="cinzel" style="font-size:14px;font-weight:700;color:${it.c||"var(--cream)"};margin-top:4px">${it.v}</div>
+      <div class="cinzel" style="font-size:14px;font-weight:700;color:${it.c||"rgba(253,248,236,0.95)"};margin-top:4px">${it.v}</div>
     </div>`).join('')}
   </div>
 </div>
@@ -482,7 +482,7 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
       <div style="display:flex;align-items:center;gap:8px">
         <span style="font-size:15px">${c.icon}</span>
-        <span class="cinzel" style="font-size:12px;color:var(--cream);font-weight:600">${c.label}</span>
+        <span class="cinzel" style="font-size:12px;color:rgba(253,248,236,0.92);font-weight:600">${c.label}</span>
       </div>
       <span class="cinzel" style="font-size:13px;color:${c.color};font-weight:700">${v}</span>
     </div>
@@ -512,12 +512,12 @@ ${BOSSES.map(b=>`<div class="boss-card" style="background:rgba(255,255,255,0.06)
     <div style="width:56px;height:56px;border-radius:14px;background:${b.color}15;border:1px solid ${b.color}35;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">${b.icon}</div>
     <div style="flex:1;min-width:0">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-        <div class="cinzel" style="font-size:13px;font-weight:700;color:var(--cream)">${b.name}</div>
+        <div class="cinzel" style="font-size:13px;font-weight:700;color:rgba(253,248,236,0.95)">${b.name}</div>
         <span class="tag cinzel" style="color:${b.color};background:${b.color}15;border:1px solid ${b.color}30;flex-shrink:0">${b.diff}</span>
       </div>
       <div style="display:flex;gap:12px;margin-top:6px">
-        <span style="font-size:11px;color:var(--red);font-family:'Crimson Pro',serif">❤️ ${b.hp} HP</span>
-        <span style="font-size:11px;color:var(--gold);font-family:'Crimson Pro',serif">🎁 +${b.reward} XP</span>
+        <span style="font-size:11px;color:rgba(230,80,80,0.9);font-family:'Crimson Pro',serif">❤️ ${b.hp} HP</span>
+        <span style="font-size:11px;color:rgba(255,183,3,0.9);font-family:'Crimson Pro',serif">🎁 +${b.reward} XP</span>
       </div>
     </div>
   </div>
@@ -596,7 +596,7 @@ ${BOSSES.map(b=>`<div class="boss-card" style="background:rgba(255,255,255,0.06)
     {l:"Current Status",v:`BMI ${bv} · ${bi.l}`,c:bi.c},
     {l:"Diff from Ideal",v:`${parseFloat(diff)>0?"+":""}${diff} kg`,c:"var(--muted)"}
   ].map((it,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:${i<2?"1px solid rgba(255,183,3,0.08)":"none"}">
-    <div style="font-size:13px;color:var(--muted);font-family:'Crimson Pro',serif">${it.l}</div>
+    <div style="font-size:13px;color:rgba(200,210,225,0.85);font-family:'Crimson Pro',serif">${it.l}</div>
     <div class="cinzel" style="font-size:13px;font-weight:700;color:${it.c}">${it.v}</div>
   </div>`).join('')}
 </div>
@@ -621,24 +621,30 @@ ${BOSSES.map(b=>`<div class="boss-card" style="background:rgba(255,255,255,0.06)
 
 <!-- Achievement grid -->
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px">
-  ${S.achievements.map(a=>`<div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid ${a.unlocked?"rgba(255,183,3,0.35)":"rgba(255,255,255,0.07)"};border-radius:20px;padding:16px;opacity:${a.unlocked?1:0.45};position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.1)">
-    ${a.unlocked?`<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)"></div>`:''}
-    <div style="font-size:${a.unlocked?'28':'0'}px;margin-bottom:7px;height:34px;display:flex;align-items:center">${a.unlocked?a.icon:`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(139,155,180,0.5)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`}</div>
-    <div class="cinzel" style="font-size:12px;font-weight:700;color:${a.unlocked?"var(--gold)":"var(--muted)"}">${a.title}</div>
-    <div style="font-size:11px;color:var(--dim);margin-top:3px;font-family:'Crimson Pro',serif">${a.desc}</div>
-    ${a.unlocked?`<div class="cinzel" style="font-size:9px;color:#22c55e;margin-top:6px;letter-spacing:1px">✓ UNLOCKED</div>`:""}
+  ${S.achievements.map(a=>`<div style="background:${a.unlocked?"rgba(255,183,3,0.07)":"rgba(255,255,255,0.04)"};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid ${a.unlocked?"rgba(255,183,3,0.3)":"rgba(255,255,255,0.09)"};border-radius:20px;padding:18px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.08)">
+    ${a.unlocked?`<div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,3,0.6),transparent)"></div>`:''}
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:38px;height:38px;border-radius:12px;background:${a.unlocked?"rgba(255,183,3,0.12)":"rgba(255,255,255,0.06)"};border:1px solid ${a.unlocked?"rgba(255,183,3,0.3)":"rgba(255,255,255,0.1)"};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        ${a.unlocked?`<span style="font-size:20px">${a.icon}</span>`:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(139,155,180,0.55)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="cinzel" style="font-size:12px;font-weight:700;color:${a.unlocked?"var(--gold)":"rgba(253,248,236,0.8)"};margin-bottom:2px">${a.title}</div>
+        <div style="font-size:11px;color:${a.unlocked?"var(--muted)":"rgba(139,155,180,0.8)"};font-family:'Crimson Pro',serif;line-height:1.4">${a.desc}</div>
+      </div>
+    </div>
+    ${a.unlocked?`<div style="display:flex;align-items:center;gap:5px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="cinzel" style="font-size:9px;color:#22c55e;letter-spacing:1px">UNLOCKED</span></div>`:`<div class="cinzel" style="font-size:9px;color:rgba(139,155,180,0.4);letter-spacing:1px">LOCKED</div>`}
   </div>`).join('')}
 </div>
 
 <!-- Leaderboard -->
 <div class="cinzel" style="font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:12px">🏴‍☠️ PIRATE LEADERBOARD</div>
-${lb.map((p,i)=>`<div style="background:${p.me?"rgba(255,183,3,0.08)":"rgba(255,255,255,0.05)"};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid ${p.me?"rgba(255,183,3,0.4)":"rgba(255,255,255,0.08)"};border-radius:16px;padding:12px 15px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:${p.me?"0 0 20px rgba(255,183,3,0.12),inset 0 1px 0 rgba(255,255,255,0.15)":"0 2px 12px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.06)"}">
-  <div style="width:26px;text-align:center;font-size:${i<3?18:12}px;color:${i===0?"#FFB703":i===1?"#94a3b8":i===2?"#b45309":"var(--dim)"}">${i<3?md[i]:`#${i+1}`}</div>
+${lb.map((p,i)=>`<div style="background:${p.me?"rgba(255,183,3,0.08)":"rgba(255,255,255,0.05)"};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid ${p.me?"rgba(255,183,3,0.4)":"rgba(255,255,255,0.1)"};border-radius:16px;padding:13px 15px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:${p.me?"0 0 20px rgba(255,183,3,0.12),inset 0 1px 0 rgba(255,255,255,0.15)":"0 2px 12px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.06)"}">
+  <div style="width:28px;text-align:center;font-size:${i<3?20:13}px;color:${i===0?"#FFB703":i===1?"#c0c8d8":i===2?"#d4894a":"rgba(139,155,180,0.7)"}">${i<3?md[i]:`#${i+1}`}</div>
   <div style="flex:1;min-width:0">
-    <div class="cinzel" style="font-size:13px;font-weight:700;color:${p.me?"var(--gold)":"var(--cream)"};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.n}</div>
-    <div style="font-size:11px;color:var(--muted);font-family:'Crimson Pro',serif">Lv.${p.l} · ${p.x.toLocaleString()} XP</div>
+    <div class="cinzel" style="font-size:13px;font-weight:700;color:${p.me?"var(--gold)":"rgba(253,248,236,0.95)"};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.n}</div>
+    <div style="font-size:11px;color:rgba(139,155,180,0.85);font-family:'Crimson Pro',serif">Lv.${p.l} · ${p.x.toLocaleString()} XP</div>
   </div>
-  <span class="tag cinzel" style="color:${p.c};background:${p.c}20;flex-shrink:0">${p.r}</span>
+  <span class="cinzel" style="font-size:9px;font-weight:700;color:${p.c};background:${p.c}22;border:1px solid ${p.c}55;border-radius:999px;padding:3px 10px;flex-shrink:0;letter-spacing:1px;backdrop-filter:blur(8px)">${p.r}</span>
 </div>`).join('')}
 </div>`;
   }
