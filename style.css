@@ -509,3 +509,41 @@ input:focus {
   transform:translateY(-2px);
   box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
 }
+
+/* ══ TEXT VISIBILITY OVERRIDES ══ */
+/* Ensure muted text is always readable against glass backgrounds */
+:root {
+  --muted: rgba(180, 195, 215, 0.9);
+  --dim: rgba(120, 140, 165, 0.85);
+  --cream: rgba(253, 248, 236, 0.95);
+}
+
+/* Card text contrast boost */
+.card, .glass, .glass-gold, .glass-dark, .quest-row, .stat-mini {
+  color: rgba(253, 248, 236, 0.92);
+}
+
+/* Section labels */
+.cinzel {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Muted labels readable */
+[style*="color:var(--muted)"],
+[style*="color: var(--muted)"] {
+  color: rgba(180, 195, 215, 0.9) !important;
+}
+[style*="color:var(--dim)"],
+[style*="color: var(--dim)"] {
+  color: rgba(120, 140, 165, 0.85) !important;
+}
+
+/* achievement locked cards - text should still show */
+.achieve-locked-title {
+  color: rgba(200, 212, 228, 0.8) !important;
+}
+
+/* Stat bar labels */
+.stat-bar-track {
+  background: rgba(255,255,255,0.08);
+}
