@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0A1628">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="Irfan Workout">
+<title>Irfan — Straw Hat Workout</title>
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel:wght@400;700;900&family=Crimson+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══ IRFAN WATERMARK ══ -->
+<div style="position:fixed;bottom:94px;right:12px;z-index:50;pointer-events:none;user-select:none">
+  <div style="font-family:'Pirata One',cursive;font-size:9px;letter-spacing:3px;color:rgba(255,183,3,0.2);text-align:right;line-height:1.8">
+    <div style="font-size:13px;letter-spacing:4px;color:rgba(255,183,3,0.25);font-weight:900">IRFAN</div>
+    <div>STRAW HAT CREW</div>
+    <div>v1.0</div>
+  </div>
+</div>
+
+<!-- WhatsApp moved to Settings -->
+
+<!-- ══ LANGUAGE SELECT SCREEN ══ -->
+<div id="lang-screen" style="position:fixed;inset:0;background:linear-gradient(180deg,#060e1a 0%,#0a1628 50%,#060e1a 100%);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px">
+
+  <!-- BG decoration -->
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">
+    <div style="position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(0deg,rgba(3,83,164,0.12) 0%,transparent 100%)"></div>
+    <div style="position:absolute;top:20%;left:-10%;width:120%;height:60%;background:radial-gradient(ellipse at center,rgba(255,183,3,0.04) 0%,transparent 70%)"></div>
+  </div>
+  <div style="position:absolute;top:16px;left:16px;color:rgba(255,183,3,0.2);font-size:18px">✦</div>
+  <div style="position:absolute;top:16px;right:16px;color:rgba(255,183,3,0.2);font-size:18px">✦</div>
+  <div style="position:absolute;bottom:16px;left:16px;color:rgba(255,183,3,0.2);font-size:18px">✦</div>
+  <div style="position:absolute;bottom:16px;right:16px;color:rgba(255,183,3,0.2);font-size:18px">✦</div>
+  <div style="position:absolute;top:28px;left:28px;right:28px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,3,0.25),transparent)"></div>
+  <div style="position:absolute;bottom:28px;left:28px;right:28px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,3,0.25),transparent)"></div>
+
+  <!-- Card -->
+  <div style="position:relative;z-index:1;width:100%;max-width:320px;text-align:center">
+
+    <!-- Icon -->
+    <div class="float" style="margin-bottom:20px">
+      <img src="icon-192.png" style="width:90px;height:90px;border-radius:22px;box-shadow:0 0 36px rgba(255,183,3,0.35)">
+    </div>
+
+    <!-- Glass card -->
+    <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.15);border-radius:24px;padding:28px 22px;position:relative;box-shadow:0 16px 48px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18)">
+      <div style="position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,3,0.5),transparent)"></div>
+
+      <!-- Title -->
+      <div class="cinzel" style="font-size:9px;letter-spacing:3px;color:rgba(139,155,180,0.7);margin-bottom:6px">⚓ PIRATE CREW</div>
+      <div class="pirate" style="font-size:22px;letter-spacing:3px;color:var(--gold);margin-bottom:4px">ভাষা বেছে নাও</div>
+      <div class="cinzel" style="font-size:10px;letter-spacing:2px;color:rgba(139,155,180,0.6);margin-bottom:24px">SELECT YOUR LANGUAGE</div>
+
+      <!-- Language Buttons -->
+      <div style="display:flex;flex-direction:column;gap:12px">
+
+        <!-- Bengali -->
+        <button onclick="selectLang('bn')"
+          style="width:100%;padding:16px 20px;background:linear-gradient(135deg,rgba(255,183,3,0.12),rgba(255,183,3,0.06));border:1px solid rgba(255,183,3,0.35);border-radius:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.1)"
+          onmouseover="this.style.background='linear-gradient(135deg,rgba(255,183,3,0.2),rgba(255,183,3,0.1))';this.style.transform='translateY(-1px)'"
+          onmouseout="this.style.background='linear-gradient(135deg,rgba(255,183,3,0.12),rgba(255,183,3,0.06))';this.style.transform='translateY(0)'">
+          <span style="font-size:28px;flex-shrink:0">🇧🇩</span>
+          <div style="text-align:left;flex:1">
+            <div class="cinzel" style="font-size:14px;font-weight:700;color:rgba(253,248,236,0.95);letter-spacing:1px">বাংলা</div>
+            <div style="font-size:11px;color:rgba(139,155,180,0.75);font-family:'Crimson Pro',serif;margin-top:2px">Bengali</div>
+          </div>
+          <span style="color:rgba(255,183,3,0.5);font-size:16px">→</span>
+        </button>
+
+        <!-- English -->
+        <button onclick="selectLang('en')"
+          style="width:100%;padding:16px 20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.13);border-radius:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.08)"
+          onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.transform='translateY(-1px)'"
+          onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)'">
+          <span style="font-size:28px;flex-shrink:0">🇺🇸</span>
+          <div style="text-align:left;flex:1">
+            <div class="cinzel" style="font-size:14px;font-weight:700;color:rgba(253,248,236,0.95);letter-spacing:1px">English</div>
+            <div style="font-size:11px;color:rgba(139,155,180,0.75);font-family:'Crimson Pro',serif;margin-top:2px">ইংরেজি</div>
+          </div>
+          <span style="color:rgba(255,255,255,0.25);font-size:16px">→</span>
+        </button>
+
+      </div>
+    </div>
+
+    <div class="pirate" style="margin-top:18px;font-size:18px;letter-spacing:6px;color:rgba(255,183,3,0.15)">NAKAMA</div>
+  </div>
+</div>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="login-screen" style="position:fixed;inset:0;background:linear-gradient(180deg,#060e1a 0%,#0a1628 50%,#060e1a 100%);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px">
+
+  <!-- Ocean waves bg -->
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">
+    <div style="position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(0deg,rgba(3,83,164,0.15) 0%,transparent 100%)"></div>
+    <div style="position:absolute;top:20%;left:-10%;width:120%;height:60%;background:radial-gradient(ellipse at center,rgba(214,40,40,0.05) 0%,transparent 70%)"></div>
+  </div>
+
+  <!-- Compass rose corners -->
+  <div style="position:absolute;top:16px;left:16px;color:rgba(255,183,3,0.25);font-size:20px">✦</div>
+  <div style="position:absolute;top:16px;right:16px;color:rgba(255,183,3,0.25);font-size:20px">✦</div>
+  <div style="position:absolute;bottom:16px;left:16px;color:rgba(255,183,3,0.25);font-size:20px">✦</div>
+  <div style="position:absolute;bottom:16px;right:16px;color:rgba(255,183,3,0.25);font-size:20px">✦</div>
+  <!-- Decorative border lines -->
+  <div style="position:absolute;top:28px;left:28px;right:28px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,3,0.3),transparent)"></div>
+  <div style="position:absolute;bottom:28px;left:28px;right:28px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,3,0.3),transparent)"></div>
+
+  <div style="position:relative;z-index:1;text-align:center;width:100%;max-width:320px">
+    <!-- App icon as hero -->
+    <div class="float" style="margin-bottom:16px">
+      <img src="icon-192.png" style="width:110px;height:110px;border-radius:28px;box-shadow:0 0 40px rgba(255,183,3,0.4)">
+    </div>
+
+    <div class="pirate" style="font-size:36px;letter-spacing:4px;background:linear-gradient(90deg,var(--gold),var(--orange),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px">IRFAN</div>
+    <div class="cinzel" style="font-size:11px;letter-spacing:4px;color:var(--muted);margin-bottom:4px">STRAW HAT WORKOUT CREW</div>
+
+    <!-- Wanted poster badge -->
+    <div style="display:inline-block;margin-bottom:28px;padding:5px 18px;border:2px solid rgba(255,183,3,0.4);border-radius:4px;background:rgba(255,183,3,0.08);position:relative">
+      <div style="position:absolute;top:-1px;left:-1px;right:-1px;bottom:-1px;border:1px solid rgba(255,183,3,0.2);border-radius:4px"></div>
+      <span class="cinzel" style="font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:700">⚓ BOUNTY: ∞ BELI ⚓</span>
+    </div>
+
+    <!-- Login box — wanted poster style -->
+    <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.18);border-radius:24px;padding:28px 22px;margin-bottom:14px;position:relative;box-shadow:0 16px 48px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2)">
+      <!-- Top gold line -->
+      <div style="position:absolute;top:-1px;left:20%;right:20%;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)"></div>
+
+      <div class="cinzel" style="font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:18px">◈ CREW REGISTRATION</div>
+
+      <div style="font-size:14px;color:var(--muted);margin-bottom:22px;line-height:1.8;font-family:'Crimson Pro',serif">
+        Grand Line-এ যাত্রা শুরু করুন।<br>
+        আপনার Google দিয়ে লগইন করুন।
+      </div>
+
+      <button id="google-login-btn" onclick="googleLogin()" style="width:100%;padding:14px 20px;background:white;border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:#1f2937;transition:all 0.2s;box-shadow:0 4px 20px rgba(0,0,0,0.4);letter-spacing:1px" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Google দিয়ে লগইন
+      </button>
+
+      <div style="margin-top:14px;font-size:10px;color:rgba(139,155,180,0.6);font-family:'Cinzel',serif;letter-spacing:1px">SECURED BY THE PIRATE KING'S SYSTEM</div>
+    </div>
+
+    <div id="login-error" style="color:var(--red);font-size:11px;font-family:'Cinzel',serif;letter-spacing:1px;display:none;padding:8px"></div>
+
+    <div class="pirate" style="margin-top:16px;font-size:22px;letter-spacing:6px;color:rgba(255,183,3,0.18)">NAKAMA</div>
+  </div>
+</div>
+
+<!-- ══ LOADING ══ -->
+<div id="loading">
+  <img src="icon-192.png" class="wave" style="width:90px;height:90px;border-radius:22px;box-shadow:0 0 30px rgba(255,183,3,0.4)">
+  <div class="cinzel" style="color:var(--gold);font-size:13px;letter-spacing:4px;margin-top:16px">SETTING SAIL...</div>
+  <div style="color:var(--muted);font-size:12px;margin-top:4px;font-family:'Crimson Pro',serif">Connecting to Grand Line</div>
+</div>
+
+<div id="saving">⚓ SAVING...</div>
+<div id="notif"></div>
+
+<!-- ══ LEVEL UP ══ -->
+<div id="lvlup" style="position:fixed;inset:0;z-index:250;background:radial-gradient(ellipse at center,rgba(214,40,40,0.4) 0%,rgba(0,0,0,0.92) 70%);display:none;align-items:center;justify-content:center;flex-direction:column">
+  <div style="text-align:center">
+    <img src="icon-192.png" style="width:90px;height:90px;border-radius:22px;margin-bottom:12px;box-shadow:0 0 40px rgba(255,183,3,0.6)">
+    <div class="pirate" style="font-size:42px;color:var(--gold);text-shadow:0 0 40px rgba(255,183,3,0.8);letter-spacing:3px">NAKAMA UP!</div>
+    <div id="lvlup-txt" style="font-size:18px;color:var(--cream);margin-top:10px;font-family:'Crimson Pro',serif"></div>
+  </div>
+</div>
+
+<!-- ══ BOSS MODAL ══ -->
+<div id="boss-modal" class="modal-bg" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal" id="boss-inner" onclick="event.stopPropagation()">
+    <div style="text-align:center;margin-bottom:18px">
+      <div id="bm-icon" style="font-size:56px"></div>
+      <div id="bm-name" class="cinzel" style="font-size:20px;font-weight:900;margin-top:8px"></div>
+      <div id="bm-diff" class="cinzel" style="font-size:10px;letter-spacing:2px;margin-top:3px"></div>
+    </div>
+    <div style="background:rgba(255,255,255,0.05);backdrop-filter:blur(8px);border-radius:14px;padding:14px;margin-bottom:14px;border:1px solid rgba(255,255,255,0.1)">
+      <div class="cinzel" style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:6px">📜 MISSION</div>
+      <div id="bm-desc" style="font-size:14px;color:var(--cream);line-height:1.6;font-family:'Crimson Pro',serif"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="background:rgba(214,40,40,0.08);backdrop-filter:blur(8px);border-radius:14px;padding:12px;text-align:center;border:1px solid rgba(214,40,40,0.2)">
+        <div id="bm-hp" class="cinzel" style="font-size:22px;font-weight:700;color:var(--red)"></div>
+        <div class="cinzel" style="font-size:9px;color:var(--muted)">ENEMY HP</div>
+      </div>
+      <div style="background:rgba(255,183,3,0.08);backdrop-filter:blur(8px);border-radius:14px;padding:12px;text-align:center;border:1px solid rgba(255,183,3,0.25)">
+        <div id="bm-xp" class="cinzel" style="font-size:22px;font-weight:700;color:var(--gold)"></div>
+        <div class="cinzel" style="font-size:9px;color:var(--muted)">XP REWARD</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="boss-accept-btn" style="width:100%;padding:13px;border-radius:10px;font-size:14px;margin-bottom:8px">⚓ ACCEPT CHALLENGE</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('boss-modal').style.display='none'" style="width:100%;padding:10px;border-radius:10px;font-size:12px">RETREAT</button>
+  </div>
+</div>
+
+<!-- ══ NAME MODAL ══ -->
+<div id="name-modal" class="modal-bg" style="display:none">
+  <div class="modal">
+    <div class="cinzel" style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:16px">⚓ SET PIRATE NAME</div>
+    <input id="name-input" placeholder="Enter your name..." maxlength="20" style="width:100%;background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border:1px solid rgba(255,183,3,0.35);border-radius:14px;padding:12px 14px;color:var(--white);font-size:15px;outline:none;margin-bottom:14px;font-family:'Crimson Pro',serif;box-shadow:inset 0 1px 0 rgba(255,255,255,0.08)">
+    <button class="btn btn-gold" onclick="saveName()" style="width:100%;padding:12px;border-radius:10px;font-size:13px;margin-bottom:8px">CONFIRM</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('name-modal').style.display='none'" style="width:100%;padding:10px;border-radius:10px;font-size:12px">CANCEL</button>
+  </div>
+</div>
+
+<!-- ══ WEIGHT MODAL ══ -->
+<div id="weight-modal" class="modal-bg" style="display:none">
+  <div class="modal" style="border-color:rgba(251,133,0,0.4)">
+    <div class="cinzel" style="font-size:14px;font-weight:700;color:var(--orange);margin-bottom:18px">⚖️ LOG WEIGHT</div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px">
+      <button onclick="adjTW(-0.5)" class="adj-btn">-</button>
+      <div style="flex:1;text-align:center">
+        <div id="tw-val" class="cinzel" style="font-size:40px;font-weight:900;color:var(--white)"></div>
+        <div style="font-size:12px;color:var(--muted)">kg</div>
+      </div>
+      <button onclick="adjTW(0.5)" class="adj-btn">+</button>
+    </div>
+    <button class="btn btn-gold" onclick="logWeight()" style="width:100%;padding:13px;border-radius:10px;font-size:13px;margin-bottom:8px">LOG WEIGHT</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('weight-modal').style.display='none'" style="width:100%;padding:10px;border-radius:10px;font-size:12px">CANCEL</button>
+  </div>
+</div>
+
+  <!-- ══ ONBOARDING ══ -->
+<div id="onboarding" style="display:none;position:fixed;inset:0;background:var(--ocean);z-index:450;overflow:hidden">
+  
+  <!-- Step 1: Welcome -->
+  <div id="ob-step1" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px;text-align:center">
+    <img src="icon-192.png" class="float" style="width:120px;height:120px;border-radius:28px;margin-bottom:24px;box-shadow:0 0 40px rgba(255,183,3,0.4)">
+    <div class="pirate" style="font-size:36px;color:var(--gold);letter-spacing:3px;margin-bottom:8px">স্বাগতম!</div>
+    <div class="cinzel" style="font-size:12px;color:var(--muted);letter-spacing:3px;margin-bottom:16px">STRAW HAT WORKOUT CREW</div>
+    <div style="font-family:'Crimson Pro',serif;font-size:16px;color:var(--cream);line-height:1.8;margin-bottom:36px">
+      তোমার Pirate যাত্রা শুরু হতে চলেছে।<br>Grand Line জয় করতে প্রস্তুত তো?
+    </div>
+    <button class="btn btn-primary" onclick="showStep(2)" style="padding:14px 40px;border-radius:30px;font-size:14px;letter-spacing:2px">⚓ শুরু করো</button>
+  </div>
+
+  <!-- Step 2: Name -->
+  <div id="ob-step2" style="display:none;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px">
+    <div style="margin-bottom:8px;font-size:32px">☠️</div>
+    <div class="cinzel" style="font-size:18px;font-weight:900;color:var(--gold);margin-bottom:8px">তোমার নাম কী?</div>
+    <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--muted);margin-bottom:28px">এটাই তোমার Pirate পরিচয় হবে</div>
+    <input id="ob-name" placeholder="তোমার নাম লেখো..." maxlength="20"
+      style="width:100%;max-width:300px;background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border:1px solid rgba(255,183,3,0.4);border-radius:16px;padding:14px 18px;color:var(--white);font-size:16px;outline:none;text-align:center;font-family:'Cinzel',serif;margin-bottom:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.1)">
+    <button class="btn btn-primary" onclick="obSaveName()" style="padding:13px 36px;border-radius:30px;font-size:13px;letter-spacing:2px">পরের ধাপ →</button>
+  </div>
+
+  <!-- Step 3: Birth Year -->
+  <div id="ob-step3" style="display:none;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px">
+    <div style="margin-bottom:8px;font-size:32px">🗓️</div>
+    <div class="cinzel" style="font-size:18px;font-weight:900;color:var(--gold);margin-bottom:8px">তুমি কত সালে জন্মেছ?</div>
+    <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--muted);margin-bottom:28px">তোমার বয়স calculate হবে</div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+      <button onclick="adjYear(-1)" class="adj-btn">-</button>
+      <div class="cinzel" id="ob-year-val" style="font-size:42px;font-weight:900;color:var(--cream);min-width:120px;text-align:center">2000</div>
+      <button onclick="adjYear(1)" class="adj-btn">+</button>
+    </div>
+    <div class="cinzel" id="ob-age-show" style="font-size:16px;color:var(--orange);margin-bottom:28px">বয়স: ২৫ বছর</div>
+    <button class="btn btn-primary" onclick="obSaveYear()" style="padding:13px 36px;border-radius:30px;font-size:13px;letter-spacing:2px">পরের ধাপ →</button>
+  </div>
+
+  <!-- Step 4: Weight & Height -->
+  <div id="ob-step4" style="display:none;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px">
+    <div style="margin-bottom:8px;font-size:32px">⚖️</div>
+    <div class="cinzel" style="font-size:18px;font-weight:900;color:var(--gold);margin-bottom:28px">শরীরের তথ্য দাও</div>
+    
+    <!-- Weight -->
+    <div style="width:100%;max-width:300px;margin-bottom:20px">
+      <div class="cinzel" style="font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:8px">ওজন (KG)</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <button onclick="adjObW(-0.5)" class="adj-btn">-</button>
+        <div class="cinzel" id="ob-weight-val" style="flex:1;text-align:center;font-size:28px;font-weight:700;color:var(--cream)">70</div>
+        <button onclick="adjObW(0.5)" class="adj-btn">+</button>
+      </div>
+    </div>
+
+    <!-- Height in feet -->
+    <div style="width:100%;max-width:300px;margin-bottom:12px">
+      <div class="cinzel" style="font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:8px">উচ্চতা</div>
+      <div style="display:flex;gap:12px">
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-align:center">ফুট</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <button onclick="adjObFt(-1)" class="adj-btn" style="width:36px;height:36px">-</button>
+            <div class="cinzel" id="ob-feet-val" style="flex:1;text-align:center;font-size:22px;font-weight:700;color:var(--cream)">5</div>
+            <button onclick="adjObFt(1)" class="adj-btn" style="width:36px;height:36px">+</button>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-align:center">ইঞ্চি</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <button onclick="adjObIn(-1)" class="adj-btn" style="width:36px;height:36px">-</button>
+            <div class="cinzel" id="ob-inch-val" style="flex:1;text-align:center;font-size:22px;font-weight:700;color:var(--cream)">7</div>
+            <button onclick="adjObIn(1)" class="adj-btn" style="width:36px;height:36px">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BMI preview -->
+    <div id="ob-bmi-show" class="cinzel" style="font-size:14px;color:var(--gold);margin-bottom:28px">BMI: — </div>
+
+    <button class="btn btn-primary" onclick="obFinish()" style="padding:13px 36px;border-radius:30px;font-size:13px;letter-spacing:2px">🏴‍☠️ যাত্রা শুরু!</button>
+  </div>
+
+</div>
+  
+<!-- ══ APP ══ -->
+<div id="app" style="display:none">
+  <div id="content"></div>
+  <nav id="nav">
+    <button class="nav-btn active" onclick="setTab('dashboard')" id="nb-dashboard">
+      <span class="ni" style="font-size:18px">🏠</span>
+      <span class="nl">HOME</span>
+    </button>
+    <button class="nav-btn" onclick="setTab('quests')" id="nb-quests">
+      <span class="ni" style="font-size:18px">📜</span>
+      <span class="nl">QUESTS</span>
+    </button>
+    <button class="nav-btn" onclick="setTab('body')" id="nb-body">
+      <span class="ni" style="font-size:18px">⚖️</span>
+      <span class="nl">BODY</span>
+    </button>
+    <button class="nav-btn" onclick="setTab('crew')" id="nb-crew">
+      <span class="ni" style="font-size:18px">🏴‍☠️</span>
+      <span class="nl">CREW</span>
+    </button>
+  </nav>
+</div>
+
+
+<!-- ══ SETTINGS MODAL ══ -->
+<div id="settings-modal" class="modal-bg" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal" style="max-height:85vh;overflow-y:auto" onclick="event.stopPropagation()">
+
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <div>
+        <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:3px;margin-bottom:2px">PIRATE SYSTEM</div>
+        <div class="cinzel" style="font-size:16px;font-weight:900;color:var(--gold)">⚙️ SETTINGS</div>
+      </div>
+      <button onclick="document.getElementById('settings-modal').style.display='none'"
+        style="width:32px;height:32px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+
+    <!-- Language -->
+    <div style="margin-bottom:20px">
+      <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:10px">🌐 LANGUAGE</div>
+      <select id="lang-select" onchange="setLang(this.value)"
+        style="width:100%;background:rgba(255,255,255,0.07);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.13);border-radius:12px;padding:12px 16px;color:rgba(253,248,236,0.92);font-family:'Cinzel',serif;font-size:12px;letter-spacing:1px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;box-shadow:inset 0 1px 0 rgba(255,255,255,0.08)">
+        <option value="en" style="background:#0a1628;color:white">🇺🇸  English</option>
+        <option value="bn" style="background:#0a1628;color:white">🇧🇩  বাংলা</option>
+      </select>
+    </div>
+
+    <!-- Divider -->
+    <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);margin-bottom:20px"></div>
+
+    <!-- Contact / WhatsApp -->
+    <div style="margin-bottom:20px">
+      <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:10px">📞 যোগাযোগ</div>
+      <a href="https://wa.me/8801817358567" target="_blank"
+        style="display:flex;align-items:center;gap:14px;background:rgba(37,211,102,0.08);border:1px solid rgba(37,211,102,0.25);border-radius:14px;padding:14px 16px;text-decoration:none;transition:all 0.2s;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06)">
+        <div style="width:40px;height:40px;background:rgba(37,211,102,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(37,211,102,0.3)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <div>
+          <div class="cinzel" style="font-size:12px;font-weight:700;color:rgba(37,211,102,0.95);margin-bottom:2px">WhatsApp</div>
+          <div style="font-size:11px;color:rgba(139,155,180,0.8);font-family:'Crimson Pro',serif">+880 1817-358567</div>
+        </div>
+        <div style="margin-left:auto;color:rgba(37,211,102,0.5);font-size:16px">→</div>
+      </a>
+    </div>
+
+    <!-- Divider -->
+    <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);margin-bottom:20px"></div>
+
+    <!-- Account Actions -->
+    <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:10px">⚓ ACCOUNT</div>
+
+    <!-- Logout -->
+    <button onclick="auth.signOut().then(()=>location.reload())"
+      style="width:100%;padding:13px;border-radius:12px;font-size:11px;letter-spacing:2px;margin-bottom:10px;background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);color:rgba(200,210,225,0.85);font-family:'Cinzel',serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.08)">
+      🚪 LOGOUT
+    </button>
+
+    <!-- Delete Account -->
+    <button onclick="confirmDeleteAccount()"
+      style="width:100%;padding:13px;border-radius:12px;font-size:11px;letter-spacing:2px;background:rgba(214,40,40,0.08);backdrop-filter:blur(12px);border:1px solid rgba(214,40,40,0.3);color:rgba(214,40,40,0.85);font-family:'Cinzel',serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      🗑️ DELETE ACCOUNT
+    </button>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
