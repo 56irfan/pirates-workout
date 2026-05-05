@@ -301,31 +301,10 @@ function adjH(d){S.height=Math.max(100,Math.min(250,S.height+d));save();render()
 function setFilter(f){qF=f;render();}
 
 function setTab(t){
-  // map old tabs to new
-  if(t==='stats'||t==='boss'||t==='achieve')t='crew';
   tab=t;
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   const nb=document.getElementById('nb-'+t);if(nb)nb.classList.add('active');
   render();document.getElementById('content').scrollTop=0;
-}
-
-function openSettings(){
-  document.getElementById('settings-modal').style.display='flex';
-}
-
-function setLang(v){
-  S.lang=v; save();
-  showNotif(v==='bn'?'ভাষা পরিবর্তন হয়েছে':'Language changed');
-}
-
-function confirmDeleteAccount(){
-  if(confirm('Are you sure? This will permanently delete ALL your data and cannot be undone.')){
-    if(confirm('Final confirmation: DELETE my account and all progress?')){
-      fbRef(`players/${PK}`).remove().then(()=>{
-        auth.signOut().then(()=>location.reload());
-      });
-    }
-  }
 }
 
 function render(){
@@ -337,13 +316,13 @@ function render(){
   if(tab==="dashboard"){
     const inc=S.quests.filter(q=>!q.done).slice(0,3);
     const userPhoto=currentUser&&currentUser.photoURL?`<img src="${currentUser.photoURL}" style="width:30px;height:30px;border-radius:50%;border:2px solid var(--gold);object-fit:cover" onerror="this.style.display='none'">`:''
-    const logoutBtn=currentUser?`<button onclick="auth.signOut().then(()=>location.reload())" style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:5px 12px;color:var(--muted);font-family:'Cinzel',serif;font-size:8px;cursor:pointer;letter-spacing:1px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.08)">LOGOUT</button>`:''
+    
     el.innerHTML=`<div style="padding:20px 16px">
 
 <!-- Top bar -->
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
   <div style="display:flex;align-items:center;gap:8px">${userPhoto}<div class="cinzel" style="font-size:9px;color:var(--dim);letter-spacing:3px">STRAW HAT SYSTEM</div></div>
-  ${settingsBtn}
+  <button onclick="openSettings()" style="background:rgba(255,255,255,0.07);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:6px 12px;color:var(--muted);font-size:16px;cursor:pointer;line-height:1">⚙️</button>
 </div>
 
 <!-- Title -->
@@ -468,36 +447,93 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
   ${!q.done?`<button class="btn" onclick="completeQuest(${q.id})" style="width:42px;height:42px;border-radius:14px;background:${c.color}15;backdrop-filter:blur(12px);border:1px solid ${c.color}60;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;box-shadow:0 4px 12px ${c.color}25,inset 0 1px 0 rgba(255,255,255,0.1)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${c.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>`:''}
 </div>`}).join('')}
 
-<!-- ⚔️ BOSS BATTLES SECTION -->
-<div style="margin-top:28px;margin-bottom:8px">
-  <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(214,40,40,0.4),transparent);margin-bottom:20px"></div>
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-    <div class="cinzel" style="font-size:9px;color:var(--red);letter-spacing:3px">⚠️ DANGER ZONE</div>
-  </div>
-  <div class="pirate" style="font-size:24px;letter-spacing:2px;color:var(--red);margin-bottom:14px">⚔️ BOSS BATTLES</div>
-  <div style="background:rgba(214,40,40,0.08);backdrop-filter:blur(16px);border:1px solid rgba(214,40,40,0.25);border-radius:18px;padding:14px;margin-bottom:16px">
-    <div class="cinzel" style="font-size:10px;color:var(--red);letter-spacing:2px;margin-bottom:4px">☠️ WARNING</div>
-    <div style="font-size:13px;color:rgba(200,210,225,0.85);line-height:1.6;font-family:'Crimson Pro',serif">Extreme real-life challenges. Defeat them to earn massive Bounty XP!</div>
-  </div>
-  ${BOSSES.map(b=>`<div class="boss-card" style="background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:18px;margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.1)" onclick="openBoss(${b.id})">
-    <div style="position:absolute;top:0;left:0;bottom:0;width:3px;background:linear-gradient(180deg,${b.color},${b.color}60)"></div>
-    <div style="display:flex;align-items:center;gap:14px">
-      <div style="width:52px;height:52px;border-radius:14px;background:${b.color}15;border:1px solid ${b.color}35;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">${b.icon}</div>
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-          <div class="cinzel" style="font-size:13px;font-weight:700;color:rgba(253,248,236,0.95)">${b.name}</div>
-          <span style="font-size:9px;font-family:'Cinzel',serif;font-weight:700;color:${b.color};background:${b.color}15;border:1px solid ${b.color}30;border-radius:999px;padding:3px 8px;flex-shrink:0">${b.diff}</span>
-        </div>
-        <div style="display:flex;gap:12px;margin-top:5px">
-          <span style="font-size:11px;color:rgba(230,80,80,0.9);font-family:'Crimson Pro',serif">❤️ ${b.hp} HP</span>
-          <span style="font-size:11px;color:rgba(255,183,3,0.9);font-family:'Crimson Pro',serif">🎁 +${b.reward} XP</span>
-        </div>
-        <div style="margin-top:10px;font-size:12px;color:rgba(200,210,225,0.8);background:rgba(0,0,0,0.2);border-radius:10px;padding:8px 12px;font-family:'Crimson Pro',serif;line-height:1.5">📜 ${b.desc}</div>
-      </div>
-    </div>
-  </div>`).join('')}
+<!-- BOSS BATTLES -->
+<div style="margin-top:24px;margin-bottom:8px">
+  <div class="cinzel" style="font-size:9px;color:var(--red);letter-spacing:3px;margin-bottom:4px">DANGER ZONE</div>
+  <div class="pirate" style="font-size:22px;letter-spacing:2px;color:var(--red);margin-bottom:10px">BOSS BATTLES</div>
+</div>
+<div style="background:rgba(214,40,40,0.06);border:1px solid rgba(214,40,40,0.2);border-radius:14px;padding:12px;margin-bottom:12px">
+  <div style="font-size:13px;color:var(--muted);font-family:'Crimson Pro',serif">☠️ চরম বাস্তব চ্যালেঞ্জ। জিতলে পাবে বিশাল Bounty XP!</div>
+</div>
+${BOSSES.map(b=>"<div style='background:rgba(255,255,255,0.06);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:16px;margin-bottom:10px;cursor:pointer;position:relative;overflow:hidden' onclick='openBoss("+b.id+")'><div style='position:absolute;top:0;left:0;bottom:0;width:3px;background:"+b.color+"'></div><div style='display:flex;align-items:center;gap:12px'><div style='width:48px;height:48px;border-radius:12px;background:"+b.color+"15;border:1px solid "+b.color+"35;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0'>"+b.icon+"</div><div style='flex:1;min-width:0'><div style='display:flex;justify-content:space-between;align-items:flex-start;gap:6px'><div class='cinzel' style='font-size:12px;font-weight:700;color:rgba(253,248,236,0.95)'>"+b.name+"</div><span class='cinzel' style='font-size:8px;color:"+b.color+";background:"+b.color+"15;border:1px solid "+b.color+"30;border-radius:20px;padding:2px 8px;flex-shrink:0'>"+b.diff+"</span></div><div style='display:flex;gap:10px;margin-top:5px'><span style='font-size:11px;color:rgba(230,80,80,0.9)'>❤️ "+b.hp+" HP</span><span style='font-size:11px;color:rgba(255,183,3,0.9)'>🎁 +"+b.reward+" XP</span></div></div></div><div style='margin-top:9px;font-size:11px;color:var(--muted);background:rgba(0,0,0,0.2);border-radius:8px;padding:7px 10px;font-family:Crimson Pro,serif'>📜 "+b.desc+"</div></div>").join('')}
+</div>`;
+  }
+
+  // ── STATS (inside CREW) ──
+  else if(tab==="_stats_off" (inside CREW) ──
+  else if(tab==="_stats_off"){
+    let tx=S.xp;for(let i=1;i<S.level;i++)tx+=xpL(i);
+    el.innerHTML=`<div style="padding:20px 16px">
+<div style="margin-bottom:18px">
+  <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:3px">PIRATE LOG</div>
+  <div class="pirate" style="font-size:26px;letter-spacing:2px;color:var(--gold)">STATUS WINDOW</div>
 </div>
 
+<!-- Profile stats -->
+<div class="glass-gold" style="padding:18px;margin-bottom:12px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    ${[
+      {l:"Name",v:S.playerName},
+      {l:"Rank",v:rk.r,c:rk.c},
+      {l:"Level",v:`Lv. ${S.level}`},
+      {l:"Class",v:rk.lb},
+      {l:"Total XP",v:tx.toLocaleString()},
+      {l:"Streak",v:`${S.streak} Days`,c:"var(--orange)"}
+    ].map(it=>`<div style="background:rgba(255,255,255,0.05);backdrop-filter:blur(8px);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.08)">
+      <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:1px">${it.l}</div>
+      <div class="cinzel" style="font-size:14px;font-weight:700;color:${it.c||"rgba(253,248,236,0.95)"};margin-top:4px">${it.v}</div>
+    </div>`).join('')}
+  </div>
+</div>
+
+<!-- Attribute bars -->
+<div class="card">
+  <div class="cinzel" style="font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:16px">⚔️ HAKI ATTRIBUTES</div>
+  ${Object.entries(S.stats).map(([k,v])=>{const c=SC[k];return`<div style="margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:15px">${c.icon}</span>
+        <span class="cinzel" style="font-size:12px;color:rgba(253,248,236,0.92);font-weight:600">${c.label}</span>
+      </div>
+      <span class="cinzel" style="font-size:13px;color:${c.color};font-weight:700">${v}</span>
+    </div>
+    <div class="stat-bar-track"><div class="stat-bar-fill" style="width:${v}%;background:linear-gradient(90deg,${c.color},${c.color}aa);box-shadow:0 0 5px ${c.color}"></div></div>
+  </div>`;}).join('')}
+</div>
+</div>`;
+  }
+
+  // ── BOSS (inside QUESTS) ──
+  else if(tab==="_boss_off"){
+    el.innerHTML=`<div style="padding:20px 16px">
+<div style="margin-bottom:16px">
+  <div class="cinzel" style="font-size:9px;color:var(--red);letter-spacing:3px">⚠️ DANGER ZONE</div>
+  <div class="pirate" style="font-size:26px;letter-spacing:2px;color:var(--red)">BOSS BATTLES</div>
+</div>
+
+<!-- Warning banner -->
+<div style=style="background:rgba(214,40,40,0.08);backdrop-filter:blur(16px);border:1px solid rgba(214,40,40,0.25);border-radius:18px;padding:16px;margin-bottom:16px">
+  <div class="cinzel" style="font-size:10px;color:var(--red);letter-spacing:2px;margin-bottom:5px">☠️ WARNING</div>
+  <div style="font-size:14px;color:var(--muted);line-height:1.6;font-family:'Crimson Pro',serif">These are extreme real-life challenges. Defeat them to earn massive Bounty XP!</div>
+</div>
+
+${BOSSES.map(b=>`<div class="boss-card" style="background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:18px;margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.1)" onclick="openBoss(${b.id})">
+  <div style="position:absolute;top:0;left:0;bottom:0;width:3px;background:linear-gradient(180deg,${b.color},${b.color}60)"></div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <div style="width:56px;height:56px;border-radius:14px;background:${b.color}15;border:1px solid ${b.color}35;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">${b.icon}</div>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div class="cinzel" style="font-size:13px;font-weight:700;color:rgba(253,248,236,0.95)">${b.name}</div>
+        <span class="tag cinzel" style="color:${b.color};background:${b.color}15;border:1px solid ${b.color}30;flex-shrink:0">${b.diff}</span>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:6px">
+        <span style="font-size:11px;color:rgba(230,80,80,0.9);font-family:'Crimson Pro',serif">❤️ ${b.hp} HP</span>
+        <span style="font-size:11px;color:rgba(255,183,3,0.9);font-family:'Crimson Pro',serif">🎁 +${b.reward} XP</span>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;font-size:13px;color:var(--muted);background:rgba(0,0,0,0.25);border-radius:8px;padding:8px 12px;font-family:'Crimson Pro',serif">📜 ${b.desc}</div>
+</div>`).join('')}
 </div>`;
   }
 
@@ -522,27 +558,29 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
     <div class="cinzel" style="font-size:52px;font-weight:900;color:${bi.c};margin-top:6px">${bv}</div>
     <div style="font-size:15px;color:${bi.c};margin-top:3px;font-family:'Crimson Pro',serif">${bi.l}</div>
   </div>
+  <!-- BMI spectrum -->
   <div style="margin-bottom:18px">
-    <div style="height:10px;border-radius:5px;overflow:hidden;background:linear-gradient(90deg,#023E8A,#22c55e 40%,#FFB703 70%,#D62828);position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.4)">
+    <div style=style="height:10px;border-radius:5px;overflow:hidden;background:linear-gradient(90deg,#023E8A,#22c55e 40%,#FFB703 70%,#D62828);position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.4)">
       <div style="position:absolute;top:50%;transform:translateY(-50%);left:${bp}%;margin-left:-5px"><div style="width:10px;height:10px;background:white;border-radius:50%;box-shadow:0 0 6px rgba(0,0,0,0.5)"></div></div>
     </div>
     <div style="display:flex;justify-content:space-between;margin-top:4px">${["15","18.5","25","30","40"].map(v=>`<span style="font-size:9px;color:var(--dim)">${v}</span>`).join('')}</div>
   </div>
+  <!-- Adjust controls -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
     <div>
       <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">WEIGHT (kg)</div>
       <div style="display:flex;align-items:center;gap:7px">
-        <button onclick="adjW(-0.5)" class="adj-btn" style="width:36px;height:36px">-</button>
+        <button onclick="adjW(-0.5)" style=class="adj-btn" style="width:36px;height:36px">-</button>
         <div class="cinzel" style="flex:1;text-align:center;font-size:19px;font-weight:700">${S.weight}</div>
-        <button onclick="adjW(0.5)" class="adj-btn" style="width:36px;height:36px">+</button>
+        <button onclick="adjW(0.5)" style=class="adj-btn" style="width:36px;height:36px">+</button>
       </div>
     </div>
     <div>
       <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:7px">HEIGHT (cm)</div>
       <div style="display:flex;align-items:center;gap:7px">
-        <button onclick="adjH(-1)" class="adj-btn" style="width:36px;height:36px">-</button>
+        <button onclick="adjH(-1)" style=class="adj-btn" style="width:36px;height:36px">-</button>
         <div class="cinzel" style="flex:1;text-align:center;font-size:19px;font-weight:700">${S.height}</div>
-        <button onclick="adjH(1)" class="adj-btn" style="width:36px;height:36px">+</button>
+        <button onclick="adjH(1)" style=class="adj-btn" style="width:36px;height:36px">+</button>
       </div>
     </div>
   </div>
@@ -554,11 +592,11 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
   <div style="display:flex;align-items:flex-end;gap:5px;height:90px">
     ${S.weightHistory.map((it,i)=>{const h=Math.max(16,16+((it.w-minW)/wr)*68);const il=i===S.weightHistory.length-1;return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
       <div style="font-size:8px;color:var(--dim)">${it.w}</div>
-      <div style="width:100%;height:${h}px;background:${il?"var(--gold)":"rgba(3,83,164,0.6)"};border-radius:3px 3px 0 0;box-shadow:${il?"0 0 12px rgba(255,183,3,0.5)":"none"}"></div>
+      <div style="width:100%;height:${h}px;background:${il?"var(--gold)":"var(--navy-mid)"};border-radius:3px 3px 0 0;box-shadow:${il?"0 0 8px rgba(255,183,3,0.4)":"none"}"></div>
       <div style="font-size:8px;color:var(--dim);white-space:nowrap">${it.date.slice(4)}</div>
     </div>`;}).join('')}
   </div>
-  <button class="btn btn-ghost" onclick="openWeightModal()" style="width:100%;margin-top:14px;padding:10px;border-radius:10px;font-size:11px;letter-spacing:1px">+ LOG TODAY'S WEIGHT</button>
+  <button class="btn btn-ghost" onclick="openWeightModal()" style="width:100%;margin-top:14px;padding:10px;border-radius:8px;font-size:11px;letter-spacing:1px">+ LOG TODAY'S WEIGHT</button>
 </div>
 
 <!-- Target analysis -->
@@ -568,7 +606,7 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
     {l:"Ideal Weight Range",v:`${ideal.mn} – ${ideal.mx} kg`,c:"#22c55e"},
     {l:"Current Status",v:`BMI ${bv} · ${bi.l}`,c:bi.c},
     {l:"Diff from Ideal",v:`${parseFloat(diff)>0?"+":""}${diff} kg`,c:"var(--muted)"}
-  ].map((it,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:${i<2?"1px solid rgba(255,255,255,0.06)":"none"}">
+  ].map((it,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:${i<2?"1px solid rgba(255,183,3,0.08)":"none"}">
     <div style="font-size:13px;color:rgba(200,210,225,0.85);font-family:'Crimson Pro',serif">${it.l}</div>
     <div class="cinzel" style="font-size:13px;font-weight:700;color:${it.c}">${it.v}</div>
   </div>`).join('')}
@@ -576,7 +614,71 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
 </div>`;
   }
 
-  // ── CREW (Status + Achievements + Leaderboard) ──
+  // ── ACHIEVEMENTS (inside CREW) ──
+  else if(tab==="_achieve_off"){
+    const lb=[
+      {n:S.playerName,l:S.level,x:S.xp,r:rk.r,c:rk.c,me:true},
+      {n:"Monkey D. Luffy",l:99,x:99999,r:"KING",c:"#D62828",me:false},
+      {n:"Roronoa Zoro",l:55,x:25000,r:"YONKO",c:"#FFB703",me:false},
+      {n:"Nami",l:40,x:12000,r:"NAKAMA",c:"#FB8500",me:false},
+      {n:"Sanji",l:35,x:8000,r:"NAKAMA",c:"#023E8A",me:false},
+    ].sort((a,b)=>b.l-a.l||b.x-a.x);
+    const md=["🥇","🥈","🥉"];
+    el.innerHTML=`<div style="padding:20px 16px">
+<div style="margin-bottom:18px">
+  <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:3px">PIRATE RECORDS</div>
+  <div class="pirate" style="font-size:26px;letter-spacing:2px;color:var(--gold)">ACHIEVEMENTS</div>
+</div>
+
+<!-- Achievement grid -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px">
+  ${S.achievements.map(a=>`<div style="background:${a.unlocked?"rgba(255,183,3,0.07)":"rgba(255,255,255,0.04)"};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid ${a.unlocked?"rgba(255,183,3,0.3)":"rgba(255,255,255,0.09)"};border-radius:20px;padding:18px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.08)">
+    ${a.unlocked?`<div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,3,0.6),transparent)"></div>`:''}
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:38px;height:38px;border-radius:12px;background:${a.unlocked?"rgba(255,183,3,0.12)":"rgba(255,255,255,0.06)"};border:1px solid ${a.unlocked?"rgba(255,183,3,0.3)":"rgba(255,255,255,0.1)"};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        ${a.unlocked?`<span style="font-size:20px">${a.icon}</span>`:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(139,155,180,0.55)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="cinzel" style="font-size:12px;font-weight:700;color:${a.unlocked?"var(--gold)":"rgba(253,248,236,0.8)"};margin-bottom:2px">${a.title}</div>
+        <div style="font-size:11px;color:${a.unlocked?"var(--muted)":"rgba(139,155,180,0.8)"};font-family:'Crimson Pro',serif;line-height:1.4">${a.desc}</div>
+      </div>
+    </div>
+    ${a.unlocked?`<div style="display:flex;align-items:center;gap:5px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="cinzel" style="font-size:9px;color:#22c55e;letter-spacing:1px">UNLOCKED</span></div>`:`<div class="cinzel" style="font-size:9px;color:rgba(139,155,180,0.4);letter-spacing:1px">LOCKED</div>`}
+  </div>`).join('')}
+</div>
+
+<!-- Leaderboard -->
+<div class="cinzel" style="font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:12px">🏴‍☠️ PIRATE LEADERBOARD</div>
+${lb.map((p,i)=>`<div style="background:${p.me?"rgba(255,183,3,0.08)":"rgba(255,255,255,0.05)"};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid ${p.me?"rgba(255,183,3,0.4)":"rgba(255,255,255,0.1)"};border-radius:16px;padding:13px 15px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:${p.me?"0 0 20px rgba(255,183,3,0.12),inset 0 1px 0 rgba(255,255,255,0.15)":"0 2px 12px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.06)"}">
+  <div style="width:28px;text-align:center;font-size:${i<3?20:13}px;color:${i===0?"#FFB703":i===1?"#c0c8d8":i===2?"#d4894a":"rgba(139,155,180,0.7)"}">${i<3?md[i]:`#${i+1}`}</div>
+  <div style="flex:1;min-width:0">
+    <div class="cinzel" style="font-size:13px;font-weight:700;color:${p.me?"var(--gold)":"rgba(253,248,236,0.95)"};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.n}</div>
+    <div style="font-size:11px;color:rgba(139,155,180,0.85);font-family:'Crimson Pro',serif">Lv.${p.l} · ${p.x.toLocaleString()} XP</div>
+  </div>
+  <span class="cinzel" style="font-size:9px;font-weight:700;color:${p.c};background:${p.c}22;border:1px solid ${p.c}55;border-radius:999px;padding:3px 10px;flex-shrink:0;letter-spacing:1px;backdrop-filter:blur(8px)">${p.r}</span>
+</div>`).join('')}
+</div>`;
+  }
+}
+
+
+function openSettings(){
+  document.getElementById('settings-modal').style.display='flex';
+  const lang=S.language||'bn';
+  const b=document.getElementById('lang-bn'),e=document.getElementById('lang-en');
+  if(!b||!e)return;
+  if(lang==='bn'){b.style.cssText+='border-color:rgba(255,183,3,0.6);background:rgba(255,183,3,0.18);color:var(--gold)';e.style.cssText+='border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:var(--muted)'}
+  else{e.style.cssText+='border-color:rgba(255,183,3,0.6);background:rgba(255,183,3,0.18);color:var(--gold)';b.style.cssText+='border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:var(--muted)'}
+}
+function setLang(l){S.language=l;save();openSettings();notif(l==='bn'?'🌐 বাংলা সেট হয়েছে':'🌐 English set','#FFB703');}
+async function deleteAccount(){
+  if(!window.confirm('সব ডাটা মুছে যাবে। নিশ্চিত?'))return;
+  if(window.prompt('নিশ্চিত করতে DELETE লিখুন:')!=='DELETE'){notif('❌ বাতিল','#8B9BB4');return;}
+  try{await fbSet('players/'+PK,null);if(currentUser)await currentUser.delete();location.reload();}
+  catch(e){notif('⚠️ '+e.message,'#D62828');}
+}
+
+  // ── CREW (STATUS + ACHIEVEMENTS + LEADERBOARD) ──
   else if(tab==="crew"){
     let tx=S.xp;for(let i=1;i<S.level;i++)tx+=xpL(i);
     const lb=[
@@ -587,86 +689,22 @@ ${fq.map(q=>{const c=SC[q.stat];return`<div class="quest-row ${q.done?'done':''}
       {n:"Sanji",l:35,x:8000,r:"NAKAMA",c:"#023E8A",me:false},
     ].sort((a,b)=>b.l-a.l||b.x-a.x);
     const md=["🥇","🥈","🥉"];
-    el.innerHTML=`<div style="padding:20px 16px">
-
-<!-- Header -->
-<div style="margin-bottom:18px">
-  <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:3px">STRAW HAT LOG</div>
-  <div class="pirate" style="font-size:26px;letter-spacing:2px;color:var(--gold)">CREW STATUS</div>
-</div>
-
-<!-- ── STATUS SECTION ── -->
-<div class="glass-gold" style="padding:18px;margin-bottom:12px">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    ${[
-      {l:"Name",v:S.playerName},
-      {l:"Rank",v:rk.r,c:rk.c},
-      {l:"Level",v:`Lv. ${S.level}`},
-      {l:"Class",v:rk.lb},
-      {l:"Total XP",v:tx.toLocaleString()},
-      {l:"Streak",v:`${S.streak} Days`,c:"var(--orange)"}
-    ].map(it=>`<div style="background:rgba(255,255,255,0.05);backdrop-filter:blur(8px);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.08)">
-      <div class="cinzel" style="font-size:9px;color:rgba(139,155,180,0.85);letter-spacing:1px">${it.l}</div>
-      <div class="cinzel" style="font-size:14px;font-weight:700;color:${it.c||"rgba(253,248,236,0.95)"};margin-top:4px">${it.v}</div>
-    </div>`).join('')}
-  </div>
-</div>
-
-<!-- Attribute bars -->
-<div class="card" style="margin-bottom:20px">
-  <div class="cinzel" style="font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:16px">⚔️ HAKI ATTRIBUTES</div>
-  ${Object.entries(S.stats).map(([k,v])=>{const c=SC[k];return`<div style="margin-bottom:16px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:15px">${c.icon}</span>
-        <span class="cinzel" style="font-size:12px;color:rgba(253,248,236,0.92);font-weight:600">${c.label}</span>
-      </div>
-      <span class="cinzel" style="font-size:13px;color:${c.color};font-weight:700">${v}</span>
-    </div>
-    <div class="stat-bar-track"><div class="stat-bar-fill" style="width:${v}%;background:linear-gradient(90deg,${c.color},${c.color}aa);box-shadow:0 0 5px ${c.color}"></div></div>
-  </div>`;}).join('')}
-</div>
-
-<!-- ── ACHIEVEMENTS ── -->
-<div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,3,0.3),transparent);margin-bottom:20px"></div>
-<div style="margin-bottom:6px">
-  <div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:3px">PIRATE RECORDS</div>
-  <div class="pirate" style="font-size:22px;letter-spacing:2px;color:var(--gold);margin-bottom:14px">ACHIEVEMENTS</div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px">
-  ${S.achievements.map(a=>`<div style="background:${a.unlocked?"rgba(255,183,3,0.07)":"rgba(255,255,255,0.04)"};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid ${a.unlocked?"rgba(255,183,3,0.3)":"rgba(255,255,255,0.09)"};border-radius:20px;padding:16px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.08)">
-    ${a.unlocked?`<div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,3,0.6),transparent)"></div>`:''}
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <div style="width:36px;height:36px;border-radius:10px;background:${a.unlocked?"rgba(255,183,3,0.12)":"rgba(255,255,255,0.06)"};border:1px solid ${a.unlocked?"rgba(255,183,3,0.3)":"rgba(255,255,255,0.1)"};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        ${a.unlocked?`<span style="font-size:18px">${a.icon}</span>`:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(139,155,180,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`}
-      </div>
-      <div style="flex:1;min-width:0">
-        <div class="cinzel" style="font-size:11px;font-weight:700;color:${a.unlocked?"var(--gold)":"rgba(220,230,245,0.85)"};margin-bottom:2px">${a.title}</div>
-        <div style="font-size:10px;color:rgba(139,155,180,0.8);font-family:'Crimson Pro',serif;line-height:1.4">${a.desc}</div>
-      </div>
-    </div>
-    ${a.unlocked?`<div style="display:flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="cinzel" style="font-size:8px;color:#22c55e;letter-spacing:1px">UNLOCKED</span></div>`:`<div class="cinzel" style="font-size:8px;color:rgba(139,155,180,0.35);letter-spacing:1px">LOCKED</div>`}
-  </div>`).join('')}
-</div>
-
-<!-- ── LEADERBOARD ── -->
-<div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,3,0.3),transparent);margin-bottom:20px"></div>
-<div class="cinzel" style="font-size:9px;color:var(--muted);letter-spacing:3px;margin-bottom:6px">GRAND LINE</div>
-<div class="pirate" style="font-size:22px;letter-spacing:2px;color:var(--gold);margin-bottom:14px">LEADERBOARD</div>
-${lb.map((p,i)=>`<div style="background:${p.me?"rgba(255,183,3,0.08)":"rgba(255,255,255,0.05)"};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid ${p.me?"rgba(255,183,3,0.4)":"rgba(255,255,255,0.1)"};border-radius:16px;padding:13px 15px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:${p.me?"0 0 20px rgba(255,183,3,0.12),inset 0 1px 0 rgba(255,255,255,0.15)":"0 2px 12px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.06)"}">
-  <div style="width:28px;text-align:center;font-size:${i<3?20:13}px;color:${i===0?"#FFB703":i===1?"#c0c8d8":i===2?"#d4894a":"rgba(139,155,180,0.7)"}">
-    ${i<3?md[i]:`#${i+1}`}
-  </div>
-  <div style="flex:1;min-width:0">
-    <div class="cinzel" style="font-size:13px;font-weight:700;color:${p.me?"var(--gold)":"rgba(253,248,236,0.95)"};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.n}</div>
-    <div style="font-size:11px;color:rgba(139,155,180,0.85);font-family:'Crimson Pro',serif">Lv.${p.l} · ${p.x.toLocaleString()} XP</div>
-  </div>
-  <span class="cinzel" style="font-size:9px;font-weight:700;color:${p.c};background:${p.c}22;border:1px solid ${p.c}55;border-radius:999px;padding:3px 10px;flex-shrink:0;letter-spacing:1px;backdrop-filter:blur(8px)">${p.r}</span>
-</div>`).join('')}
-
-</div>`;
+    el.innerHTML="<div style='padding:20px 16px'>"
+    +"<div style='margin-bottom:18px'><div class='cinzel' style='font-size:9px;color:var(--muted);letter-spacing:3px'>PIRATE RECORDS</div><div class='pirate' style='font-size:26px;letter-spacing:2px;color:var(--gold)'>CREW STATUS</div></div>"
+    +"<div class='glass-gold' style='padding:18px;margin-bottom:12px'><div style='display:grid;grid-template-columns:1fr 1fr;gap:10px'>"
+    +[{l:"Name",v:S.playerName},{l:"Rank",v:rk.r,c:rk.c},{l:"Level",v:"Lv. "+S.level},{l:"Class",v:rk.lb},{l:"Total XP",v:tx.toLocaleString()},{l:"Streak",v:S.streak+" Days",c:"var(--orange)"}].map(it=>"<div style='background:rgba(255,255,255,0.05);backdrop-filter:blur(8px);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.08)'><div class='cinzel' style='font-size:9px;color:var(--muted);letter-spacing:1px'>"+it.l+"</div><div class='cinzel' style='font-size:14px;font-weight:700;color:"+(it.c||"rgba(253,248,236,0.95)")+";margin-top:4px'>"+it.v+"</div></div>").join('')
+    +"</div></div>"
+    +"<div class='card' style='margin-bottom:14px'><div class='cinzel' style='font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:16px'>⚔️ HAKI ATTRIBUTES</div>"
+    +Object.entries(S.stats).map(([k,v])=>{const c=SC[k];return"<div style='margin-bottom:16px'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:6px'><div style='display:flex;align-items:center;gap:8px'><span style='font-size:15px'>"+c.icon+"</span><span class='cinzel' style='font-size:12px;color:rgba(253,248,236,0.92);font-weight:600'>"+c.label+"</span></div><span class='cinzel' style='font-size:13px;color:"+c.color+";font-weight:700'>"+v+"</span></div><div class='stat-bar-track'><div class='stat-bar-fill' style='width:"+v+"%;background:linear-gradient(90deg,"+c.color+","+c.color+"aa);box-shadow:0 0 5px "+c.color+"'></div></div></div>";}).join('')
+    +"</div>"
+    +"<div class='cinzel' style='font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:10px'>🏆 ACHIEVEMENTS</div>"
+    +"<div style='display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px'>"
+    +S.achievements.map(a=>"<div style='background:"+(a.unlocked?"rgba(255,183,3,0.07)":"rgba(255,255,255,0.04)")+";backdrop-filter:blur(16px);border:1px solid "+(a.unlocked?"rgba(255,183,3,0.3)":"rgba(255,255,255,0.09)")+";border-radius:18px;padding:15px;position:relative;overflow:hidden'>"+(a.unlocked?"<div style='position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,3,0.6),transparent)'></div>":"")+"<div style='font-size:26px;margin-bottom:6px'>"+(a.unlocked?a.icon:"🔒")+"</div><div class='cinzel' style='font-size:11px;font-weight:700;color:"+(a.unlocked?"var(--gold)":"rgba(253,248,236,0.8)")+"'>"+a.title+"</div><div style='font-size:10px;color:var(--muted);margin-top:3px'>"+a.desc+"</div>"+(a.unlocked?"<div class='cinzel' style='font-size:8px;color:#22c55e;margin-top:6px;letter-spacing:1px'>✓ UNLOCKED</div>":"")+"</div>").join('')
+    +"</div>"
+    +"<div class='cinzel' style='font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:10px'>🏴‍☠️ PIRATE LEADERBOARD</div>"
+    +lb.map((p,i)=>"<div style='background:"+(p.me?"rgba(255,183,3,0.08)":"rgba(255,255,255,0.05)")+";backdrop-filter:blur(16px);border:1px solid "+(p.me?"rgba(255,183,3,0.4)":"rgba(255,255,255,0.1)")+";border-radius:16px;padding:13px 15px;display:flex;align-items:center;gap:12px;margin-bottom:8px'><div style='width:28px;text-align:center;font-size:"+(i<3?20:13)+"px;color:"+(i===0?"#FFB703":i===1?"#c0c8d8":i===2?"#d4894a":"rgba(139,155,180,0.7)")+"'>"+(i<3?md[i]:"#"+(i+1))+"</div><div style='flex:1;min-width:0'><div class='cinzel' style='font-size:13px;font-weight:700;color:"+(p.me?"var(--gold)":"rgba(253,248,236,0.95)")+";overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"+p.n+"</div><div style='font-size:11px;color:rgba(139,155,180,0.85)'>Lv."+p.l+" · "+p.x.toLocaleString()+" XP</div></div><span class='cinzel' style='font-size:9px;font-weight:700;color:"+p.c+";background:"+p.c+"22;border:1px solid "+p.c+"55;border-radius:999px;padding:3px 10px;flex-shrink:0'>"+p.r+"</span></div>").join('')
+    +"</div>";
   }
-}
 
 async function init(){
   const saved=await fbGet(`players/${PK}`);
