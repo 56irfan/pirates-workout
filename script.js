@@ -319,11 +319,18 @@ function setLang(v){
 }
 
 function confirmDeleteAccount(){
-  if(confirm('Are you sure? This will permanently delete ALL your data and cannot be undone.')){
-    if(confirm('Final confirmation: DELETE my account and all progress?')){
-      fbRef(`players/${PK}`).remove().then(()=>{
-        auth.signOut().then(()=>location.reload());
-      });
+  document.getElementById('settings-modal').style.display='none';
+  if(confirm('সব data মুছে যাবে। নিশ্চিত?')){
+    if(confirm('শেষ সুযোগ — সব progress চিরতরে DELETE হবে?')){
+      db.ref('players/'+PK).remove()
+        .then(()=>{ return auth.currentUser.delete(); })
+        .then(()=>{ location.reload(); })
+        .catch(e=>{
+          // If delete user fails (needs re-auth), at least clear data
+          db.ref('players/'+PK).remove().then(()=>{
+            auth.signOut().then(()=>location.reload());
+          });
+        });
     }
   }
 }
