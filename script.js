@@ -120,7 +120,8 @@ const L10N = {
     saving: "সেভ হচ্ছে...",
     settingSail: "যাত্রা শুরু হচ্ছে...",
     connecting: "গ্র্যান্ড লাইনে সংযোগ হচ্ছে",
-    viewAll: "সব দেখুন →"
+    viewAll: "সব দেখুন →",
+    loading: "লোড হচ্ছে..."
   },
   en: {
     appTitle: "STRAW HAT SYSTEM",
@@ -184,7 +185,8 @@ const L10N = {
     saving: "SAVING...",
     settingSail: "SETTING SAIL...",
     connecting: "Connecting to Grand Line",
-    viewAll: "VIEW ALL →"
+    viewAll: "VIEW ALL →",
+    loading: "LOADING..."
   }
 };
 
@@ -471,7 +473,7 @@ async function googleLogin() {
     btn.disabled = false;
     const errEl = document.getElementById('login-error');
     errEl.style.display = 'block';
-    errEl.textContent = '⚠ ' + (e.message || t('error'));
+    errEl.textContent = '⚠ ' + (e.message || 'Error');
   }
 }
 
@@ -908,11 +910,40 @@ ${lb.map((p,i)=>`<div style="background:${p.me?"rgba(255,183,3,0.08)":"rgba(255,
   }
 }
 
-// ══ START THE APP - ONLY AUTH HANDLER ══
-document.getElementById('loading').style.display = 'flex';
+// ══ HIDE LOADING FUNCTION ══
+function hideLoadingAndShowScreen(screenId) {
+  const loading = document.getElementById('loading');
+  if (loading) loading.style.display = 'none';
+  
+  // Hide all screens first
+  const screens = ['lang-screen', 'account-screen', 'login-screen', 'onboarding', 'app'];
+  screens.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  
+  // Show the requested screen
+  const targetScreen = document.getElementById(screenId);
+  if (targetScreen) targetScreen.style.display = 'flex';
+}
+
+// ══ START THE APP ══
 updateAllTexts();
 
+// Hide loading after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const loading = document.getElementById('loading');
+    if (loading) loading.style.display = 'none';
+    document.getElementById('lang-screen').style.display = 'flex';
+  }, 500);
+});
+
 auth.onAuthStateChanged(async (user) => {
+  // Hide loading immediately
+  const loading = document.getElementById('loading');
+  if (loading) loading.style.display = 'none';
+  
   if (user) {
     currentUser = user;
     PK = user.uid;
@@ -940,7 +971,7 @@ auth.onAuthStateChanged(async (user) => {
       isNewUser = false;
       pendingNewUserData = null;
       
-      // Hide login screen, show name modal for new user
+      // Hide login screen, show name modal
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('name-modal').style.display = 'flex';
       updateAllTexts();
@@ -971,18 +1002,15 @@ auth.onAuthStateChanged(async (user) => {
         document.getElementById('account-screen').style.display = 'none';
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('onboarding').style.display = 'none';
-        document.getElementById('loading').style.display = 'none';
         document.getElementById('app').style.display = 'flex';
         render();
       } else {
         // Auth user but no data - start fresh flow
-        document.getElementById('loading').style.display = 'none';
         document.getElementById('lang-screen').style.display = 'flex';
       }
     }
   } else {
     // No user logged in - show language screen
-    document.getElementById('loading').style.display = 'none';
     document.getElementById('lang-screen').style.display = 'flex';
   }
 });
