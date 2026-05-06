@@ -607,22 +607,22 @@ input:focus {
   border-radius: 13px;
   background: linear-gradient(
     105deg,
-    transparent 30%,
-    rgba(255,255,255,0.18) 50%,
-    transparent 70%
+    transparent 25%,
+    rgba(255,255,255,0.22) 50%,
+    transparent 75%
   );
   background-size: 200% 100%;
   background-position: -200% center;
-  animation: settingsLiquid 3.5s ease-in-out infinite;
+  animation: settingsShimmer 4s ease-in-out infinite;
   pointer-events: none;
+  z-index: 2;
 }
-@keyframes settingsLiquid {
+@keyframes settingsShimmer {
   0%   { background-position: -200% center; opacity: 0; }
-  20%  { opacity: 1; }
+  15%  { opacity: 1; }
   60%  { background-position: 200% center; opacity: 1; }
   100% { background-position: 200% center; opacity: 0; }
 }
-.settings-glass-btn:active::after {
-  animation: none;
-}
+.settings-glass-btn:active { transform: scale(0.88) !important; }
+.settings-glass-btn:active::after { animation: none; }
 
