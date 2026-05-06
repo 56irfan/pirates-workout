@@ -141,27 +141,74 @@ body::after {
   z-index:100;
   box-shadow: 0 -1px 0 rgba(255,183,3,0.15), 0 -20px 60px rgba(0,0,0,0.5);
 }
+/* ── NAV SILHOUETTE ICON SYSTEM ── */
+:root {
+  --nav-icon-color: rgba(139,155,180,0.65);
+  --nav-icon-active: var(--gold);
+  --nav-icon-size: 22px;
+}
+
 .nav-btn {
-  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
-  background:none;border:none;cursor:pointer;padding:6px 2px;
-  color:rgba(139,155,180,0.7);transition:all 0.25s cubic-bezier(.34,1.56,.64,1);
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;cursor:pointer;padding:6px 4px;
+  color:var(--nav-icon-color);
+  transition:all 0.25s cubic-bezier(.34,1.56,.64,1);
   font-family:'Cinzel',serif;border-radius:14px;
   position:relative;
 }
+.nav-btn:active{transform:scale(0.88)}
+
+/* Active state */
 .nav-btn.active {
-  color:var(--gold);
-  background: linear-gradient(135deg, rgba(255,183,3,0.12), rgba(255,183,3,0.05));
+  color:var(--nav-icon-active);
+  background: linear-gradient(135deg, rgba(255,183,3,0.1), rgba(255,183,3,0.04));
 }
 .nav-btn.active::before {
   content:'';position:absolute;inset:0;
   border-radius:14px;
-  border:1px solid rgba(255,183,3,0.25);
-  box-shadow: 0 0 16px rgba(255,183,3,0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+  border:1px solid rgba(255,183,3,0.22);
+  box-shadow: 0 0 14px rgba(255,183,3,0.08), inset 0 1px 0 rgba(255,255,255,0.1);
   pointer-events:none;
 }
-.nav-btn.active .ni{filter:drop-shadow(0 0 8px var(--gold))}
-.nav-btn .nl{font-size:7.5px;letter-spacing:0.5px;font-weight:700}
-.nav-btn:active{transform:scale(0.88)}
+
+/* SVG icon sizing and color via currentColor */
+.nav-btn .ni {
+  width:var(--nav-icon-size);
+  height:var(--nav-icon-size);
+  display:block;
+  color:inherit;
+  transition:all 0.25s cubic-bezier(.34,1.56,.64,1);
+  flex-shrink:0;
+}
+
+/* Glow on active icon */
+.nav-btn.active .ni {
+  filter: drop-shadow(0 0 6px rgba(255,183,3,0.7));
+  transform: translateY(-1px);
+}
+
+/* Label */
+.nav-btn .nl {
+  font-size:7.5px;
+  letter-spacing:1px;
+  font-weight:700;
+  color:inherit;
+  text-shadow: none;
+  transition:color 0.25s;
+}
+.nav-btn.active .nl {
+  text-shadow: 0 0 8px rgba(255,183,3,0.4);
+}
+
+/* Hover (non-touch) */
+@media(hover:hover){
+  .nav-btn:not(.active):hover{
+    color:rgba(200,215,235,0.85);
+  }
+  .nav-btn:not(.active):hover .ni{
+    transform:translateY(-1px);
+  }
+}
 
 /* ── GLASS CARDS ── */
 .card {
